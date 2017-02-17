@@ -1,7 +1,3 @@
-# Description :
-Source of http://brozeus.tk/plwip.tk/builder.php
-*Currently only compatible with FireFox*
-
 ## Basic Working
 
  First User creates desired signature design using `builder.php` then when they click on Done button on that page a array of info about background, various elements..etc is passed onto `template.php` with help of ajax. This `template.php` file creates a template file inside `/templates` folder and write array of elements in `json` format and  then returns template file name that was created. Then after receving template file name the builder.php shows a link to use this.
