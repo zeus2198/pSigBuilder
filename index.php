@@ -145,7 +145,7 @@ Background:
 </div>
 </div>
 <div id="footer">
-Website designed and made by <a href="https://github.com/xxxZeus" target="_blank">Simran Singh</a>
+Made by <a href="https://github.com/xxxZeus" target="_blank">Simran Singh</a>
 </div>
 <!-- font and image uploader thingy -->
 <input id="filebrow" type="file" accept="image/*" style="display:none" />
