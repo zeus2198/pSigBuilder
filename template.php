@@ -16,8 +16,8 @@ function randomstring($l = 8)
 }
 $json = $_POST['core'];
 $fname = randomstring();
-while(file_exists('templates/'.$fname.'.ini'))$fname = randomstring();
-$f = fopen('templates/'.$fname.'.ini', 'a');
+while(file_exists($fname))$fname = randomstring();
+$f = fopen('templates/'.$fname.'.json', 'a');
 fwrite($f, $json);
 fclose($f);
 echo $fname;

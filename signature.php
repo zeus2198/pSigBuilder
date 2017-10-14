@@ -1,12 +1,12 @@
 <?php
-if(!isset($_GET["uid"]) || !isset($_GET["tid"]))
+if(!isset($_GET["name"]) || !isset($_GET["tid"]))
 {
 	echo "kthnxbai.";
 	exit();
 }
-$u = $_GET["uid"];
+$name = $_GET["name"];
 $t = $_GET["tid"];
-$stats = json_decode(file_get_contents('https://thepilotslife.com/api/'.$u), true);
+$stats = json_decode(file_get_contents('JSON_API_URL'.$name), true);
 if($stats == NULL)
 {
 	echo "Wrong User id/name!";
@@ -26,8 +26,8 @@ function imagettftextoutline(&$im,$size,$angle,$x,$y,&$col,
     $text2 = imagettftext($im,$size,$angle,$x,$y,$col,$fontfile,$text);
 }
 
-$file = fopen('templates/'.$t.'.ini', "r") or die("Wrong template id!");
-$info = fread($file, filesize('templates/'.$t.'.ini'));
+$file = fopen('templates/'.$t.'.json', "r") or die("Wrong template id!");
+$info = fread($file, filesize('templates/'.$t.'.json'));
 fclose($file);
 $info = json_decode($info, true);
 $im = imagecreatetruecolor($info[3]['width'], $info[3]['height']);
@@ -74,12 +74,38 @@ switch($info[2]['type'])
 	}
 }
 
+for($i = 0; $i < sizeof($info[4]); $i++)
+{
+	$tmp = -1;
+	$choice = explode('.', $info[4][$i]['url']);
+	$choice = strtolower(array_pop($choice));
+	switch ($choice) 
+	{
+		case 'jpeg':
+		case 'jpg':
+			$tmp = imagecreatefromjpeg($info[4][$i]['url']);
+			break;
+
+		case 'png':
+			$tmp = imagecreatefrompng($info[4][$i]['url']);
+			break;
+
+		case 'gif':
+			$tmp = imagecreatefromgif($info[4][$i]['url']);
+			break;
+		
+		default:die('A image which was inserted is not supported');
+	}
+	imagecopyresampled($im, $tmp, $info[4][$i]['x'], $info[4][$i]['y'], 0, 0, $info[4][$i]['width'], $info[4][$i]['height'], imagesx($tmp), imagesy($tmp));
+	imagedestroy($tmp);	
+}
+
 for($i = 0; $i < sizeof($info[0]); $i++)
 {	
 	$rgb = explode(',', $info[0][$i]['color']);	
 	$fcol = imagecolorallocate($im, intval($rgb[0]), intval($rgb[1]), intval($rgb[2]));
 	$bbox = imagettfbbox ( $info[0][$i]['size'], 0.0 , 'gd_fonts/'.$info[0][$i]['font'].'.ttf' , $info[0][$i]['text'] );
-	$y_offset = abs($bbox[7] - $bbox[1]) ;
+	$y_offset = abs($bbox[7] - $bbox[1]);
 	if($info[0][$i]['outline'] == 'none')imagettftext($im, $info[0][$i]['size'], 0.0, $info[0][$i]['x'], $info[0][$i]['y']+$y_offset, $fcol, 'gd_fonts/'.$info[0][$i]['font'].'.ttf', $info[0][$i]['text']);
 	else
 	{
@@ -104,7 +130,7 @@ for($i = 0; $i < sizeof($info[0]); $i++)
 //Stats :
 for($i = 0; $i < sizeof($info[1]); $i++)
 {	
-	$rgb = explode(',', $info[1][$i]['color']);	
+	$rgb = explode(',', $info[1][$i]['color']);		
 	$fcol = imagecolorallocate($im, intval($rgb[0]), intval($rgb[1]), intval($rgb[2]));
 	$bbox = imagettfbbox ( $info[1][$i]['size'], 0.0 , 'gd_fonts/'.$info[1][$i]['font'].'.ttf' , $info[1][$i]['text'] );
 	$y_offset = abs($bbox[7] - $bbox[1]) ;
@@ -113,27 +139,32 @@ for($i = 0; $i < sizeof($info[1]); $i++)
 	{
 		case 'Name':
 		{
-			$txt = $stats["User_Name"];
+			$txt = $name;
 			break;
 		}
 		case 'Score':
 		{
-			$txt = $stats["User_Score"];
+			$txt = $stats["points"];
 			break;
 		}
 		case 'Money':
 		{
-			$txt = $stats["User_Money"];
+			$txt = '$'.number_format($stats["cash"]);
 			break;
 		}
-		case 'VIP':
+		case 'OnlineTime':
 		{
-			$txt = $stats["User_VIP"];
+			$txt = round($stats["timePlayed"]/3600, 2);
 			break;
 		}
-		case 'Last Seen':
+		case 'KDR':
 		{
-			//...........
+			$txt = round($stats["kills"]/$stats["deaths"], 2);
+			break;
+		}
+		case 'Reactions':
+		{
+			$txt = $stats["reactionTestWin"];
 			break;
 		}
 	}
@@ -157,8 +188,6 @@ for($i = 0; $i < sizeof($info[1]); $i++)
 		
 	}
 }
-
-
 
 header('Content-type: image/png');
 imagepng($im);
