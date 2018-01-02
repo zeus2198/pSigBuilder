@@ -21,7 +21,7 @@ When you finalize the signature, you will be prompted to enter a username, enter
 
 Since this and the [SA-MP server signature builder](https://github.com/xxxZeus/SAMP-server-real-time-signature-builder) shares the same core, so you can watch its demo video to see how this app works, in case the above link is dead:
 
-[![Demo Link](https://i.gyazo.com/be5a82b232ed747084e1c640f8874a98.png)](https://www.youtube.com/watch?v=rJ_SCEZM59Q&t=2s)
+[![Demo Link](https://i.gyazo.com/be5a82b232ed747084e1c640f8874a98.png)](https://www.youtube.com/watch?v=bLJzrgltMjU)
 
 # Things to do to make it work for your server
 
